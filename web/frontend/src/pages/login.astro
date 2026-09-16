@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Iniciar sesión">
+  <div class="card auth-card">
+    <h1>Iniciar sesión</h1>
+    <form id="login-form">
+      <div class="field"><label>Usuario</label><input name="username" autocomplete="username" required /></div>
+      <div class="field"><label>Contraseña</label><input name="password" type="password" autocomplete="current-password" required /></div>
+      <p><button type="submit" class="btn btn-yellow" style="width:100%">Entrar</button></p>
+      <p id="error" class="error"></p>
+    </form>
+    <p class="muted">Usuario inicial: <code>admin</code> / <code>admin</code> (cámbialo tras entrar).</p>
+  </div>
+  <script>
+    import { api, me } from '../lib/api.js';
+    const check = await me();
+    if (check.status === 200) location.href = '/';
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target as HTMLFormElement);
+      const { status, data } = await api('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ username: fd.get('username'), password: fd.get('password') }),
+      });
+      if (status === 200) location.href = '/';
+      else document.getElementById('error').textContent = data?.error || 'Error al entrar';
+    });
+  </script>
+</Layout>

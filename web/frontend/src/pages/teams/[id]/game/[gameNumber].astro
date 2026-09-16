@@ -1,0 +1,136 @@
+---
+import Layout from '../../../../layouts/Layout.astro';
+const id = Astro.params.id;
+const gameNumber = Astro.params.gameNumber;
+---
+<Layout title={`Juego ${gameNumber}`}>
+  <div class="page-head">
+    <p class="crumb"><a href={`/teams/${id}`}>← Equipo</a></p>
+    <h1 id="page-title">Juego</h1>
+  </div>
+  <div class="table-wrap">
+    <table id="grid">
+      <thead id="thead"></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <p style="margin-top: 1rem"><button id="save" type="button" class="btn btn-yellow">Guardar juego</button> <span id="msg" class="ok"></span></p>
+
+  <script>
+    import { api } from '../../../../lib/api.js';
+    const parts = location.pathname.split('/');
+    const id = parts[2] || '';
+    const gameNumber = parts[4] || '';
+
+    const OFFENSE = [
+      ['VB', 'at_bats'], ['CA', 'runs'], ['H', 'hits'], ['2B', 'doubles'],
+      ['3B', 'triples'], ['HR', 'home_runs'], ['CI', 'rbi'], ['K', 'strikeouts'],
+      ['BB', 'walks'], ['BR', 'stolen_bases'], ['GP', 'hit_by_pitch'],
+      ['SH', 'sacrifice_hits'], ['SF', 'sacrifice_flies'], ['INT', 'interference'],
+    ];
+    const PITCHING = [
+      ['P?', 'pitched'], ['G/P', 'result'], ['INN', 'innings'],
+      ['CL', 'earned_runs'], ['K', 'strikeouts'], ['H', 'hits_allowed'],
+    ];
+
+    function cell(row: HTMLTableRowElement, value: number | string | null | undefined, cls = 'small') {
+      const td = document.createElement('td');
+      const input = document.createElement('input');
+      input.className = cls;
+      if (value !== null && value !== undefined && value !== 0) input.value = String(value);
+      td.appendChild(input);
+      row.appendChild(td);
+      return input;
+    }
+
+    async function load() {
+      const { data } = await api(`/teams/${id}/games/${gameNumber}`);
+      document.getElementById('page-title').textContent = `Juego ${data.game_number}`;
+
+      const thead = document.getElementById('thead');
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<th>Nº</th><th>Nombre</th>';
+      tr.innerHTML += `<th colspan="${OFFENSE.length}" style="text-align:center">Ofensiva</th>`;
+      tr.innerHTML += `<th colspan="${PITCHING.length}" style="text-align:center">Lanzadores</th>`;
+      thead.appendChild(tr);
+
+      const tr2 = document.createElement('tr');
+      tr2.innerHTML = '<th></th><th></th>';
+      for (const [label] of OFFENSE) tr2.innerHTML += `<th>${label}</th>`;
+      for (const [label] of PITCHING) tr2.innerHTML += `<th>${label}</th>`;
+      thead.appendChild(tr2);
+
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = '';
+      for (const p of data.players) {
+        const row = document.createElement('tr');
+        row.dataset.playerId = String(p.player_id);
+        row.innerHTML = `<td>${p.number ?? ''}</td><td>${p.name}</td>`;
+        const inputs: Record<string, HTMLInputElement> = {};
+        for (const [, field] of OFFENSE) {
+          inputs[`o:${field}`] = cell(row, p.offense ? (p.offense[field] ?? '') : '');
+        }
+        for (const [, field] of PITCHING) {
+          const isResult = field === 'result';
+          const isPitched = field === 'pitched';
+          let val = p.pitching ? (p.pitching[field] ?? '') : '';
+          if (isResult && val === null) val = '';
+          inputs[`p:${field}`] = cell(row, val, isPitched ? '' : isResult ? '' : 'small');
+          if (isPitched) inputs[`p:${field}`].type = 'checkbox';
+        }
+        tbody.appendChild(row);
+      }
+    }
+
+    function num(v: string): number {
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    document.getElementById('save').addEventListener('click', async () => {
+      const tbody = document.getElementById('tbody');
+      const players: Array<{ player_id: number; offense?: any; pitching?: any }> = [];
+      for (const row of Array.from(tbody.children) as HTMLTableRowElement[]) {
+        const playerId = Number(row.dataset.playerId);
+        const inputs = row.querySelectorAll('input');
+        let idx = 0;
+        const offense: any = {};
+        let hasOffense = false;
+        for (const [, field] of OFFENSE) {
+          const v = num(inputs[idx++].value);
+          offense[field] = v;
+          if (v !== 0) hasOffense = true;
+        }
+        const pitching: any = {};
+        let hasPitching = false;
+        for (const [, field] of PITCHING) {
+          const el = inputs[idx++];
+          if (field === 'pitched') {
+            pitching.pitched = el.checked ? 1 : 0;
+            if (el.checked) hasPitching = true;
+          } else if (field === 'result') {
+            pitching.result = el.value || null;
+            if (el.value) hasPitching = true;
+          } else {
+            const v = num(el.value);
+            pitching[field] = v;
+            if (v !== 0) hasPitching = true;
+          }
+        }
+        const entry: any = { player_id: playerId };
+        if (hasOffense) entry.offense = offense;
+        if (hasPitching) entry.pitching = pitching;
+        if (hasOffense || hasPitching) players.push(entry);
+      }
+
+      const { status, data } = await api(`/teams/${id}/games/${gameNumber}`, {
+        method: 'PUT',
+        body: JSON.stringify({ players }),
+      });
+      const msg = document.getElementById('msg');
+      msg.textContent = status === 200 ? 'Guardado ✓' : (data?.error || 'Error');
+    });
+
+    load();
+  </script>
+</Layout>

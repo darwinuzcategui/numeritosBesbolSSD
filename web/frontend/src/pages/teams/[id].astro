@@ -1,0 +1,90 @@
+---
+import Layout from '../../layouts/Layout.astro';
+const id = Astro.params.id;
+---
+<Layout title="Equipo">
+  <div class="page-head">
+    <p class="crumb"><a href="/">← Equipos</a></p>
+    <h1 id="team-name">Equipo</h1>
+  </div>
+
+  <div id="admin-actions" class="card" style="display:none">
+    <form id="new-player" class="inline-form">
+      <input name="name" placeholder="Nombre del jugador" required />
+      <input name="number" type="number" placeholder="Nº" class="small" />
+      <button type="submit" class="btn btn-yellow">Agregar jugador</button>
+    </form>
+    <p><span id="player-error" class="error"></span></p>
+  </div>
+
+  <div class="card">
+    <h2>Capturar por juego</h2>
+    <p id="game-links"></p>
+  </div>
+
+  <div class="card">
+    <h2>Jugadores (temporada)</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Nº</th><th>Nombre</th><th>VB</th><th>H</th><th>HR</th><th>CI</th><th>AV</th><th>SLG</th><th>JJ</th><th>PCL/ERA</th></tr></thead>
+        <tbody id="players"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    import { me, api } from '../../lib/api.js';
+    const id = location.pathname.split('/')[2] || '';
+
+    async function load() {
+      const m = await me();
+      if (m.status === 200 && m.data.role === 'admin') {
+        document.getElementById('admin-actions').style.display = '';
+      }
+      const { data } = await api(`/teams/${id}/season`);
+      document.getElementById('team-name').textContent = data.team.name;
+
+      const links = document.getElementById('game-links');
+      links.innerHTML = '';
+      for (let g = 1; g <= data.games_count; g++) {
+        const a = document.createElement('a');
+        a.href = `/teams/${id}/game/${g}`;
+        a.textContent = `Juego ${g}`;
+        a.style.marginRight = '8px';
+        links.appendChild(a);
+      }
+
+      const tbody = document.getElementById('players');
+      tbody.innerHTML = '';
+      for (const p of data.players) {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.number ?? ''}</td>
+          <td><a href="/players/${p.id}">${p.name}</a></td>
+          <td>${p.offense.at_bats}</td>
+          <td>${p.offense.hits}</td>
+          <td>${p.offense.home_runs}</td>
+          <td>${p.offense.rbi}</td>
+          <td>${p.offense.av.toFixed(3)}</td>
+          <td>${p.offense.slg.toFixed(3)}</td>
+          <td>${p.pitching.jj}</td>
+          <td>${p.pitching.pcl_era.toFixed(2)}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    document.getElementById('new-player').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target as HTMLFormElement);
+      const number = fd.get('number') ? Number(fd.get('number')) : null;
+      const { status, data } = await api(`/teams/${id}/players`, {
+        method: 'POST',
+        body: JSON.stringify({ name: fd.get('name'), number }),
+      });
+      if (status === 201) { (e.target as HTMLFormElement).reset(); load(); }
+      else document.getElementById('player-error').textContent = data?.error || 'Error';
+    });
+
+    load();
+  </script>
+</Layout>

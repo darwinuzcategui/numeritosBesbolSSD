@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Equipos">
+  <div class="page-head"><h1>Equipos</h1></div>
+  <div id="admin-actions" class="card" style="display:none">
+    <form id="new-team" class="inline-form">
+      <input name="name" placeholder="Nuevo equipo" required />
+      <button type="submit" class="btn btn-yellow">Agregar</button>
+    </form>
+    <p><span id="team-error" class="error"></span></p>
+  </div>
+  <div class="card">
+    <ul id="teams" class="list-clean"></ul>
+  </div>
+  <script>
+    import { me, api } from '../lib/api.js';
+
+    async function load() {
+      const m = await me();
+      if (m.status === 200 && m.data.role === 'admin') {
+        document.getElementById('admin-actions').style.display = '';
+      }
+      const { data } = await api('/teams');
+      const ul = document.getElementById('teams');
+      ul.innerHTML = '';
+      if (!data.length) {
+        const li = document.createElement('li');
+        li.textContent = 'Sin equipos todavía.';
+        ul.appendChild(li);
+      }
+      for (const t of data) {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `/teams/${t.id}`;
+        a.textContent = t.name;
+        li.appendChild(a);
+        ul.appendChild(li);
+      }
+    }
+
+    document.getElementById('new-team').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target as HTMLFormElement);
+      const { status, data } = await api('/teams', {
+        method: 'POST',
+        body: JSON.stringify({ name: fd.get('name') }),
+      });
+      if (status === 201) { (e.target as HTMLFormElement).reset(); load(); }
+      else document.getElementById('team-error').textContent = data?.error || 'Error';
+    });
+
+    load();
+  </script>
+</Layout>

@@ -1,0 +1,63 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Ajustes">
+  <div class="page-head"><h1>Configuración de la liga</h1></div>
+  <div class="card" style="max-width: 520px">
+    <form id="settings-form">
+      <div class="field"><label>División</label><input name="division" required /></div>
+      <div class="field"><label>Liga</label><input name="league" required /></div>
+      <div class="field"><label>Nombre del campeonato</label>
+        <select name="championship">
+          <option value="REGULAR">REGULAR</option>
+          <option value="CAMPEONATO NAVIDAD">CAMPEONATO NAVIDAD</option>
+        </select>
+      </div>
+      <div class="field"><label>Temporada / Nombre</label><input name="season" required /></div>
+      <div class="field"><label>Categoría</label>
+        <select name="category">
+          <option value="INFANTIL">INFANTIL</option>
+          <option value="ADULTO">ADULTO</option>
+        </select>
+      </div>
+      <div class="field"><label>Número de juegos de la temporada</label>
+        <input name="games_count" type="number" min="1" required />
+      </div>
+      <p><button type="submit" class="btn btn-yellow">Guardar</button> <span id="msg" class="ok"></span></p>
+    </form>
+  </div>
+
+  <script>
+    import { api } from '../../lib/api.js';
+
+    async function load() {
+      const { data } = await api('/settings');
+      const f = (document.getElementById('settings-form') as HTMLFormElement);
+      (f.elements.namedItem('division') as HTMLInputElement).value = data.division ?? '';
+      (f.elements.namedItem('league') as HTMLInputElement).value = data.league ?? '';
+      (f.elements.namedItem('championship') as HTMLSelectElement).value = data.championship ?? 'REGULAR';
+      (f.elements.namedItem('season') as HTMLInputElement).value = data.season ?? '';
+      (f.elements.namedItem('category') as HTMLSelectElement).value = data.category ?? 'INFANTIL';
+      (f.elements.namedItem('games_count') as HTMLInputElement).value = data.games_count ?? 15;
+    }
+
+    document.getElementById('settings-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target as HTMLFormElement);
+      const { status } = await api('/settings', {
+        method: 'PUT',
+        body: JSON.stringify({
+          division: fd.get('division'),
+          league: fd.get('league'),
+          championship: fd.get('championship'),
+          season: fd.get('season'),
+          category: fd.get('category'),
+          games_count: Number(fd.get('games_count')),
+        }),
+      });
+      document.getElementById('msg').textContent = status === 200 ? 'Guardado ✓' : 'Error';
+    });
+
+    load();
+  </script>
+</Layout>

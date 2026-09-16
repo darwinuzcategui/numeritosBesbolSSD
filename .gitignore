@@ -1,0 +1,24 @@
+# Dependencias
+node_modules/
+
+# Build y caché
+dist/
+.astro/
+*.tsbuildinfo
+
+# Base de datos SQLite (datos en tiempo de ejecución)
+*.db
+*.db-wal
+*.db-shm
+
+# Entorno
+.env
+.env.*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de bloqueo (LibreOffice/OpenOffice)
+~lock.*
+.~lock.*
