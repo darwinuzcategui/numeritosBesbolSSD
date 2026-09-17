@@ -13,8 +13,8 @@ test('AV y SLG (caso Fase 1: VB=51, H=16, HR=1)', () => {
   const vb = 51, h = 16;
   const bases = basesTotal(h, 0, 0, 1);
   assert.equal(bases, 19);
-  assert.equal(battingAverage(h, vb).toFixed(3), '0.314');
-  assert.equal(slugging(bases, vb).toFixed(3), '0.373');
+  assert.equal(battingAverage(h, vb).toFixed(1), '313.7');
+  assert.equal(slugging(bases, vb).toFixed(1), '372.5');
 });
 
 test('AV y SLG con VB=0 dan 0', () => {

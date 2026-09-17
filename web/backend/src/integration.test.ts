@@ -104,8 +104,8 @@ test('estadísticas: AV y SLG (caso Fase 1)', async () => {
   const p = season.json().players[0];
   assert.equal(p.offense.at_bats, 51);
   assert.equal(p.offense.hits, 16);
-  assert.equal(p.offense.av, 0.314);
-  assert.equal(p.offense.slg, 0.373);
+  assert.equal(p.offense.av, 313.7);
+  assert.equal(p.offense.slg, 372.5);
 });
 
 test('estadísticas: PCL/ERA (caso Fase 1)', async () => {
@@ -131,6 +131,30 @@ test('estadísticas: PCL/ERA (caso Fase 1)', async () => {
   assert.equal(p.pitching.jj, 6);
   assert.equal(p.pitching.innings, 18.0);
   assert.equal(p.pitching.pcl_era, 3.5);
+});
+
+test('estadísticas: juegos salvados (JS) con resultado S', async () => {
+  const { cookie } = await login('admin');
+  const team = await app.inject({ method: 'POST', url: '/teams', headers: { cookie }, payload: { name: 'Equipo S' } });
+  const teamId = team.json().id;
+  const player = await app.inject({
+    method: 'POST', url: `/teams/${teamId}/players`, headers: { cookie },
+    payload: { name: 'RELEVISTA', number: 2 },
+  });
+  const playerId = player.json().id;
+  const results = ['S', 'S', 'G', 'P'];
+  for (let g = 1; g <= 4; g++) {
+    await app.inject({
+      method: 'PUT', url: `/players/${playerId}/games/${g}`, headers: { cookie },
+      payload: { pitching: { pitched: 1, result: results[g - 1], innings: 1.0 } },
+    });
+  }
+  const season = await app.inject({ method: 'GET', url: `/teams/${teamId}/season`, headers: { cookie } });
+  const p = season.json().players[0];
+  assert.equal(p.pitching.jj, 4);
+  assert.equal(p.pitching.jg, 1);
+  assert.equal(p.pitching.jp, 1);
+  assert.equal(p.pitching.js, 2);
 });
 
 test('número de juegos configurable (settings)', async () => {

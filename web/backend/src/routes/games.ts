@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import { db } from '../db.js';
 import { auth } from '../middleware.js';
-import { basesTotal, battingAverage, slugging, inningsOuts, pclEra, outsToInnings, round3, round2 } from '../calc.js';
+import { basesTotal, battingAverage, slugging, inningsOuts, pclEra, outsToInnings, round1, round2 } from '../calc.js';
 
 const OFFENSE_COLS = [
   'at_bats', 'runs', 'hits', 'doubles', 'triples', 'home_runs', 'rbi',
@@ -35,7 +35,7 @@ function upsertPitching(playerId: number, gameNumber: number, p: Record<string, 
     `INSERT INTO pitching_games (player_id, game_number, ${PITCHING_COLS.join(', ')}) ` +
     `VALUES (${['?', '?', ...PITCHING_COLS.map(() => '?')].join(', ')}) ` +
     `ON CONFLICT (player_id, game_number) DO UPDATE SET ${sets}`;
-  const result = p.result === 'G' || p.result === 'P' ? p.result : null;
+  const result = p.result === 'G' || p.result === 'P' || p.result === 'S' ? p.result : null;
   db.prepare(sql).run(
     playerId,
     gameNumber,
@@ -70,6 +70,7 @@ function seasonStats(teamId: number) {
     const jj = pit.filter((r) => r.pitched === 1).length;
     const jg = pit.filter((r) => r.result === 'G').length;
     const jp = pit.filter((r) => r.result === 'P').length;
+    const js = pit.filter((r) => r.result === 'S').length;
     const outs = pit.reduce((acc, r) => acc + inningsOuts(num(r.innings)), 0);
     const earnedRuns = sum(pit, 'earned_runs');
 
@@ -92,13 +93,14 @@ function seasonStats(teamId: number) {
         sacrifice_hits: sum(off, 'sacrifice_hits'),
         sacrifice_flies: sum(off, 'sacrifice_flies'),
         interference: sum(off, 'interference'),
-        av: round3(battingAverage(hits, atBats)),
-        slg: round3(slugging(bases, atBats)),
+        av: round1(battingAverage(hits, atBats)),
+        slg: round1(slugging(bases, atBats)),
       },
       pitching: {
         jj,
         jg,
         jp,
+        js,
         innings: outsToInnings(outs),
         earned_runs: earnedRuns,
         strikeouts: sum(pit, 'strikeouts'),
