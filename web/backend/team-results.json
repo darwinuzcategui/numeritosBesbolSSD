@@ -1,0 +1,342 @@
+﻿[
+    {
+        "team":  "Equipo 1",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "E",
+                            "runs_scored":  3,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  3
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 2",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "P",
+                            "runs_scored":  1,
+                            "runs_against":  8
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  2,
+                            "runs_against":  7
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 3",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "P",
+                            "runs_scored":  2,
+                            "runs_against":  8
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  5,
+                            "runs_against":  5
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 4",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  5,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  4,
+                            "runs_against":  4
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 5",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "E",
+                            "runs_scored":  3,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  3
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 6",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  5
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  3,
+                            "runs_against":  6
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 7",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "E",
+                            "runs_scored":  3,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  3
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 8",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  6,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  5,
+                            "runs_against":  4
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 9",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "P",
+                            "runs_scored":  2,
+                            "runs_against":  6
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  5,
+                            "runs_against":  3
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 10",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  5,
+                            "runs_against":  5
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  4,
+                            "runs_against":  6
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 11",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "E",
+                            "runs_scored":  3,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  3
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 12",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  3,
+                            "runs_against":  4
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 13",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "E",
+                            "runs_scored":  3,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  3
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 14",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  6,
+                            "runs_against":  5
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  5,
+                            "runs_against":  6
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 15",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "P",
+                            "runs_scored":  2,
+                            "runs_against":  8
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  5,
+                            "runs_against":  5
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 16",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  5,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  4,
+                            "runs_against":  4
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 17",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "E",
+                            "runs_scored":  3,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  3
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 18",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  4,
+                            "runs_against":  5
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  3,
+                            "runs_against":  6
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 19",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  8,
+                            "runs_against":  1
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "G",
+                            "runs_scored":  7,
+                            "runs_against":  2
+                        }
+                    ]
+    },
+    {
+        "team":  "Equipo 20",
+        "results":  [
+                        {
+                            "game_number":  1,
+                            "result":  "G",
+                            "runs_scored":  6,
+                            "runs_against":  3
+                        },
+                        {
+                            "game_number":  2,
+                            "result":  "P",
+                            "runs_scored":  5,
+                            "runs_against":  4
+                        }
+                    ]
+    }
+]
