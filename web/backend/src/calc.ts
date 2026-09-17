@@ -6,12 +6,12 @@ export function basesTotal(hits: number, doubles: number, triples: number, homeR
 
 export function battingAverage(hits: number, atBats: number): number {
   if (atBats === 0) return 0;
-  return hits / atBats;
+  return (hits * 1000) / atBats;
 }
 
 export function slugging(bases: number, atBats: number): number {
   if (atBats === 0) return 0;
-  return bases / atBats;
+  return (bases * 1000) / atBats;
 }
 
 // innings en tercios (3.1 = 3 entradas + 1 out) -> outs
@@ -35,6 +35,10 @@ export function outsToInnings(outs: number): number {
 
 export function round3(value: number): number {
   return Math.round(value * 1000) / 1000;
+}
+
+export function round1(value: number): number {
+  return Math.round(value * 10) / 10;
 }
 
 export function round2(value: number): number {

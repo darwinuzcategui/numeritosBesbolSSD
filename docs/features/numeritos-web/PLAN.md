@@ -120,7 +120,7 @@ CREATE TABLE pitching_games (
   player_id INTEGER NOT NULL REFERENCES players(id) ON DELETE CASCADE,
   game_number INTEGER NOT NULL,
   pitched INTEGER DEFAULT 0,
-  result TEXT,                 -- 'G', 'P' o NULL
+  result TEXT,                 -- 'G', 'P', 'S' o NULL
   innings REAL DEFAULT 0,      -- tercios: 3.1 = 3 IP + 1 out
   earned_runs INTEGER DEFAULT 0,
   strikeouts INTEGER DEFAULT 0,
@@ -135,11 +135,11 @@ CREATE TABLE pitching_games (
 ### Reglas de cálculo (en `calc.ts`, replican Fase 1)
 
 - `bases = (hits - doubles - triples - home_runs) + doubles*2 + triples*3 + home_runs*4`
-- `AV = hits / at_bats` (si `at_bats=0` → 0), formato `.XXX`
-- `SLG = bases / at_bats` (si `at_bats=0` → 0)
+- `AV = hits * 1000 / at_bats` (si `at_bats=0` → 0), por mil con decimal
+- `SLG = bases * 1000 / at_bats` (si `at_bats=0` → 0)
 - `outs = Σ (floor(innings)*3 + round((innings - floor(innings))*10))`
 - `PCL_ERA = earned_runs * 27 / outs` (si `outs=0` → 0)
-- `JJ` = nº de juegos con `pitched=1`; `JG`/`JP` = conteo de `result='G'/'P'`.
+- `JJ` = nº de juegos con `pitched=1`; `JG`/`JP`/`JS` = conteo de `result='G'/'P'/'S'`.
 
 ### Endpoints REST (JSON)
 
@@ -165,7 +165,7 @@ y a PUT de estadísticas (no gestiona equipos, jugadores ni usuarios).
 - **Errores:** respuestas JSON con `{ error: mensaje }` y códigos adecuados
   (401 no autenticado, 403 sin permiso, 404 no encontrado, 400 validación, 500 interno).
 - **Validación de entrada:** enteros ≥ 0 para conteos; `innings` con tercios `.0/.1/.2`;
-  `game_number` dentro de `1..games_count`; `result` en `{'G','P'}`.
+  `game_number` dentro de `1..games_count`; `result` en `{'G','P','S'}`.
 - **Upsert por juego:** `PUT .../games/:gameNumber` usa `INSERT ... ON CONFLICT` sobre
   `UNIQUE(player_id, game_number)` para crear o actualizar sin duplicados.
 - **Concurrencia local:** app de un solo usuario por máquina; no se requiere lógica

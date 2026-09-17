@@ -32,8 +32,8 @@ y juegos configurable**. Es la **Fase 2** del proyecto.
 - Reglas de negocio ya definidas y validadas en la Fase 1:
   - Ofensiva por jugador y juego: `VB, CA, H, 2B, 3B, HR, CI, K, BB, BR, GP, SH, SF, INT`.
   - Calculados: `BAL` (bases totales), `AL` (apariciones), `AV = H/VB`, `SLG = bases/VB`.
-  - Lanzadores por jugador y juego: `¿lanzó?, G/P, INN (tercios), CL, K, H`.
-  - Calculados: `JJ, JG, JP`, `PCL/ERA = CL × 9 / INN`.
+  - Lanzadores por jugador y juego: `¿lanzó?, G/P/S, INN (tercios), CL, K, H`.
+  - Calculados: `JJ, JG, JP, JS`, `PCL/ERA = CL × 9 / INN`.
 - No existe aún código web/móvil en el repositorio.
 
 ## Dentro del alcance
@@ -80,9 +80,9 @@ y juegos configurable**. Es la **Fase 2** del proyecto.
 - **Ofensiva (por juego):** `VB, CA, H, 2B, 3B, HR, CI, K, BB, BR, GP, SH, SF, INT`.
   - `BAL` (bases totales) = `(H - 2B - 3B - HR) + 2B×2 + 3B×3 + HR×4`.
   - `AL` (apariciones) = `VB + BB + GP + SH + SF + INT`.
-  - `AV` = `H / VB` (formato `.XXX`); `SLG` = `BAL / VB`. Si `VB = 0`, `AV = SLG = 0`.
-- **Lanzadores (por juego):** `¿lanzó?`, `G/P`, `INN` (tercios: 3.1 = 3 entradas y 1 out), `CL`, `K`, `H`.
-  - `JJ` = juegos lanzados; `JG` = ganados; `JP` = perdidos.
+  - `AV` = `H × 1000 / VB` (por mil, con decimal); `SLG` = `BAL × 1000 / VB`. Si `VB = 0`, `AV = SLG = 0`.
+- **Lanzadores (por juego):** `¿lanzó?`, `G/P/S`, `INN` (tercios: 3.1 = 3 entradas y 1 out), `CL`, `K`, `H`.
+  - `JJ` = juegos lanzados; `JG` = ganados; `JP` = perdidos; `JS` = salvados (juegos con resultado `S`).
   - `PCL/ERA` = `CL × 9 / INN` (INN en tercios). Sin entradas, `PCL/ERA` = 0.
 - **Sin datos:** un jugador sin estadísticas no afecta acumulados; AV/SLG/PCL muestran 0.
 - **Entrada inválida:** los campos numéricos son enteros ≥ 0; `INN` acepta tercios
@@ -139,7 +139,7 @@ accesibilidad móvil (aplican en Fase 3). Los estados web básicos se cubren arr
 | CA-01 | Login con usuario admin y capturador; probar acciones permitidas/prohibidas. | Acceso según rol; credenciales malas rechazadas. |
 | CA-02 | Crear/editar/eliminar equipo en la UI y verificar persistencia. | Cambios reflejados y persistentes. |
 | CA-03 | Agregar jugadores a un equipo. | Aparecen en la lista y persisten. |
-| CA-04 | Cargar ofensiva de prueba y comparar AV/SLG contra cálculo manual. | AV y SLG correctos (ej. H=16, VB=51 → AV .314). |
+| CA-04 | Cargar ofensiva de prueba y comparar AV/SLG contra cálculo manual. | AV y SLG correctos (ej. H=16, VB=51 → AV 313.7, SLG 372.5). |
 | CA-05 | Cargar pitcheo de prueba y comparar PCL/ERA contra cálculo manual. | PCL/ERA correcto (ej. CL=7, 18 IP → 3.5). |
 | CA-06 | Configurar número de juegos y capturar; verificar acumulados. | Acumulados sobre el número configurado. |
 | CA-07 | Capturar por juego y por jugador; verificar coherencia. | Mismos datos en ambas vistas. |

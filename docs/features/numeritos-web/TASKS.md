@@ -34,7 +34,8 @@ solo cuando su implementación y validación estén hechas y registradas.
 | T5 / CA-02,03 | `integration.test.ts` | crear equipo/jugador | CRUD persiste | ✓ |
 | T6 / CA-04..07 | `integration.test.ts` | stats por juego | AV .314, PCL 3.5, settings | ✓ |
 | T7 / CA-01 | `integration.test.ts` | capturador crea equipo | 403 (sin permiso) | ✓ |
-| Backend | `npm test` + `typecheck` + smoke | — | 14/14 tests, 0 errores TS, listen+login+sesión OK | ✓ |
+| Backend | `npm test` + `typecheck` + smoke | — | 15/15 tests, 0 errores TS, listen+login+sesión OK | ✓ |
+| Hotfix AV/SLG+SV | `npm test` (15 tests) + `build` frontend | VB=51,H=16,HR=1; result S×2 | AV 313.7, SLG 372.5, JS=2 | ✓ |
 | Frontend | `npm run build -w frontend` | — | `astro build` completo sin errores | ✓ |
 | CA UI (flujos) | Manual en navegador | — | pendiente (no se automatizó UI) | pendiente |
 
@@ -43,6 +44,8 @@ solo cuando su implementación y validación estén hechas y registradas.
 - Driver de BD: `node:sqlite` (Node v22.22.1, experimental). Aislado en `db.ts`.
 - Backend: Fastify + node:sqlite. Frontend: Astro SSR (adaptador Node).
 - Usuario inicial: `admin` / `admin` (cambiar tras el primer acceso).
+- Hotfix aplicado a la web (alineado al Excel): `AV`/`SLG` por mil (`H*1000/VB`, 1 decimal) y
+  lanzadores con resultado `G/P/S` + `JS` (juegos salvados = conteo de `S`).
 - Cómo ejecutar: `npm run dev:backend` y `npm run dev:frontend` (abrir http://localhost:4321).
 - Pendiente: prueba manual de los flujos de UI en navegador (login, CRUD, captura).
 

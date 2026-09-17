@@ -26,7 +26,7 @@ const id = Astro.params.id;
     <h2>Jugadores (temporada)</h2>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Nº</th><th>Nombre</th><th>VB</th><th>H</th><th>HR</th><th>CI</th><th>AV</th><th>SLG</th><th>JJ</th><th>PCL/ERA</th></tr></thead>
+        <thead><tr><th>Nº</th><th>Nombre</th><th>VB</th><th>H</th><th>HR</th><th>CI</th><th>AV</th><th>SLG</th><th>JJ</th><th>JS</th><th>PCL/ERA</th></tr></thead>
         <tbody id="players"></tbody>
       </table>
     </div>
@@ -65,9 +65,10 @@ const id = Astro.params.id;
           <td>${p.offense.hits}</td>
           <td>${p.offense.home_runs}</td>
           <td>${p.offense.rbi}</td>
-          <td>${p.offense.av.toFixed(3)}</td>
-          <td>${p.offense.slg.toFixed(3)}</td>
+          <td>${p.offense.av.toFixed(1)}</td>
+          <td>${p.offense.slg.toFixed(1)}</td>
           <td>${p.pitching.jj}</td>
+          <td>${p.pitching.js}</td>
           <td>${p.pitching.pcl_era.toFixed(2)}</td>`;
         tbody.appendChild(tr);
       }
