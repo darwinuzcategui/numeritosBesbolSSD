@@ -52,10 +52,18 @@ y juegos configurable**. Es la **Fase 2** del proyecto.
   un juego) y **por jugador** (sus juegos).
 - **RF-10:** Configuración de la **información de la liga/campeonato**: división, liga,
   nombre de campeonato (Regular / Campeonato Navidad), temporada y categoría (Infantil / Adulto).
+- **RF-11:** Captura de **resultados por juego** de cada equipo: resultado `G/P/E` y
+  marcador (`CA` carreras a favor, `CR` carreras en contra).
+- **RF-12:** Vista **"Total general"** de ofensiva: todos los jugadores de todos los
+  equipos con sus acumulados y `AV`/`SLG`.
+- **RF-13:** Vista **"Lanzadores"** consolidada: `JJ, JG, JP, JS, INN, CL, K, H` y `PCL/ERA`.
+- **RF-14:** **Tabla de posiciones** por equipo: `JJ, JG, JP, JE, CA, CR, DIF, Average`,
+  ordenada por Average desc y DIF desc.
+- **RF-15:** **Top 10 líderes** en renglones ofensivos (AV, SLG, HR, CI, H, BR, CA) y de
+  pitcheo (PCL/ERA, JG, K, INN, H permitidos, SV).
 
 ## Fuera de alcance
 
-- Tabla de posiciones y líderes (iteración posterior).
 - Importación/exportación del Excel (posterior).
 - Aplicación móvil (Fase 3).
 - Licencia por disco duro / ID de equipo (Fase 4).
@@ -87,6 +95,10 @@ y juegos configurable**. Es la **Fase 2** del proyecto.
 - **Sin datos:** un jugador sin estadísticas no afecta acumulados; AV/SLG/PCL muestran 0.
 - **Entrada inválida:** los campos numéricos son enteros ≥ 0; `INN` acepta tercios
   (`.0`, `.1`, `.2`); los acumulados no pueden ser negativos.
+- **Resultado de equipo (por juego):** `G` (ganado), `P` (perdido), `E` (empatado);
+  `CA` y `CR` son enteros ≥ 0.
+  - `JJ` = juegos jugados (con resultado); `JG`/`JP`/`JE` = ganados/perdidos/empatados.
+  - `DIF` = `CA − CR`; `Average` = `(JG + 0.5 × JE) / JJ` (si `JJ = 0`, `Average = 0`).
 
 ## Comportamiento web y casos alternativos
 
@@ -131,6 +143,15 @@ accesibilidad móvil (aplican en Fase 3). Los estados web básicos se cubren arr
 - **CA-08 · RF-10:** Dado el formulario de configuración, cuando el admin edita y guarda
   la info de liga/campeonato (división, liga, campeonato, temporada, categoría),
   entonces persiste y se muestra correctamente.
+- **CA-09 · RF-11:** Dados los resultados de juego de un equipo, cuando los capturo,
+  entonces persisten y la tabla de posiciones los refleja.
+- **CA-10 · RF-12/RF-13:** Dado el consolidado, cuando consulto "Total general" y
+  "Lanzadores", entonces los acumulados y AV/SLG/PCL-ERA son correctos.
+- **CA-11 · RF-14:** Dados los resultados de todos los equipos, cuando consulto la tabla
+  de posiciones, entonces JJ, JG, JP, JE, CA, CR, DIF y Average son correctos y el orden
+  es Average desc → DIF desc.
+- **CA-12 · RF-15:** Dado el consolidado, cuando consulto líderes, entonces cada top 10
+  muestra los jugadores correctos en cada renglón ofensivo y de pitcheo.
 
 ## Cómo se comprueba el comportamiento
 

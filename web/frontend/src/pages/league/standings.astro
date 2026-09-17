@@ -1,0 +1,25 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Tabla de posiciones">
+  <div class="page-head"><h1>Tabla de posiciones</h1></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Pos</th><th>Equipo</th><th>JJ</th><th>JG</th><th>JP</th><th>JE</th><th>CA</th><th>CR</th><th>DIF</th><th>Average</th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <script>
+    import { api } from '../../lib/api.js';
+    const { data } = await api('/league/standings');
+    document.getElementById('tbody').innerHTML = data
+      .map((t: any, i: number) => `<tr>
+        <td>${i + 1}</td><td><a href="/teams/${t.team_id}">${t.team}</a></td>
+        <td>${t.jj}</td><td>${t.jg}</td><td>${t.jp}</td><td>${t.je}</td>
+        <td>${t.ca}</td><td>${t.cr}</td><td>${t.dif}</td><td>${t.average.toFixed(3)}</td>
+      </tr>`)
+      .join('');
+  </script>
+</Layout>

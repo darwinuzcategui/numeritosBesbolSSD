@@ -83,6 +83,16 @@ db.exec(`
     hits_allowed INTEGER DEFAULT 0,
     UNIQUE (player_id, game_number)
   );
+
+  CREATE TABLE IF NOT EXISTS team_games (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    team_id INTEGER NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+    game_number INTEGER NOT NULL,
+    result TEXT,
+    runs_scored INTEGER DEFAULT 0,
+    runs_against INTEGER DEFAULT 0,
+    UNIQUE (team_id, game_number)
+  );
 `);
 
 // Ajustes por defecto

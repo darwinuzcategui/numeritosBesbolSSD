@@ -1,0 +1,55 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Líderes">
+  <div class="page-head"><h1>Top 10 — Líderes</h1></div>
+  <div id="sections"></div>
+  <script>
+    import { api } from '../../lib/api.js';
+
+    const OFF = [
+      ['AV', 'av', (v: number) => v.toFixed(1)],
+      ['SLG', 'slg', (v: number) => v.toFixed(1)],
+      ['HR', 'hr', (v: number) => String(v)],
+      ['CI', 'ci', (v: number) => String(v)],
+      ['H', 'h', (v: number) => String(v)],
+      ['BR', 'br', (v: number) => String(v)],
+      ['CA', 'ca', (v: number) => String(v)],
+    ] as const;
+    const PIT = [
+      ['PCL/ERA', 'pcl_era', (v: number) => v.toFixed(2)],
+      ['JG (ganados)', 'jg', (v: number) => String(v)],
+      ['K (ponches)', 'k', (v: number) => String(v)],
+      ['INN (entradas)', 'inn', (v: number) => String(v)],
+      ['H permitidos', 'h_permitidos', (v: number) => String(v)],
+      ['SV (salvados)', 'sv', (v: number) => String(v)],
+    ] as const;
+
+    const { data } = await api('/league/leaders');
+
+    function card(title: string, rows: Array<{ name: string; team: string; value: number }>, fmt: (v: number) => string) {
+      const items = rows.length
+        ? rows.map((r, i) => `<li><span class="pos">${i + 1}</span><span class="nm">${r.name}</span><span class="tm">${r.team}</span><span class="vl">${fmt(r.value)}</span></li>`).join('')
+        : '<li class="muted">Sin datos</li>';
+      return `<div class="card lead-card"><h2>${title}</h2><ol class="lead-list">${items}</ol></div>`;
+    }
+
+    let html = '<div class="lead-grid">';
+    for (const [label, key, fmt] of OFF) html += card(`TOP 10 — ${label}`, data.offense[key], fmt);
+    for (const [label, key, fmt] of PIT) html += card(`TOP 10 LANZADORES — ${label}`, data.pitching[key], fmt);
+    html += '</div>';
+    document.getElementById('sections').innerHTML = html;
+  </script>
+  <style>
+    .lead-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
+    .lead-card { margin-bottom: 0; }
+    .lead-card h2 { font-size: 0.9rem; }
+    .lead-list { list-style: none; margin: 0; padding: 0; }
+    .lead-list li { display: flex; gap: 0.6rem; padding: 0.35rem 0; border-bottom: 1px solid var(--line-soft); font-size: 0.88rem; }
+    .lead-list li:last-child { border-bottom: none; }
+    .lead-list .pos { color: var(--ink-3); width: 1.2rem; text-align: right; font-variant-numeric: tabular-nums; }
+    .lead-list .nm { flex: 1; font-weight: 550; }
+    .lead-list .tm { color: var(--ink-3); font-size: 0.78rem; align-self: center; }
+    .lead-list .vl { font-weight: 650; font-variant-numeric: tabular-nums; }
+  </style>
+</Layout>

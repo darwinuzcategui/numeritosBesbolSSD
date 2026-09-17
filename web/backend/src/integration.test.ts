@@ -166,3 +166,64 @@ test('número de juegos configurable (settings)', async () => {
   const get = await app.inject({ method: 'GET', url: '/settings', headers: { cookie } });
   assert.equal(get.json().games_count, 20);
 });
+
+test('resultados de equipo y tabla de posiciones', async () => {
+  const { cookie } = await login('admin');
+  const mk = async (name: string) =>
+    (await app.inject({ method: 'POST', url: '/teams', headers: { cookie }, payload: { name } })).json().id;
+  const t1 = await mk('Equipo A');
+  const t2 = await mk('Equipo B');
+
+  await app.inject({
+    method: 'PUT', url: `/teams/${t1}/results`, headers: { cookie },
+    payload: { results: [
+      { game_number: 1, result: 'G', runs_scored: 4, runs_against: 3 },
+      { game_number: 2, result: 'E', runs_scored: 3, runs_against: 3 },
+    ] },
+  });
+  await app.inject({
+    method: 'PUT', url: `/teams/${t2}/results`, headers: { cookie },
+    payload: { results: [{ game_number: 1, result: 'P', runs_scored: 3, runs_against: 4 }] },
+  });
+
+  const getA = await app.inject({ method: 'GET', url: `/teams/${t1}/results`, headers: { cookie } });
+  assert.equal(getA.statusCode, 200);
+  assert.equal(getA.json().results[0].result, 'G');
+
+  const st = await app.inject({ method: 'GET', url: '/league/standings', headers: { cookie } });
+  assert.equal(st.statusCode, 200);
+  const list = st.json();
+  const a = list.find((x: any) => x.team === 'Equipo A');
+  const b = list.find((x: any) => x.team === 'Equipo B');
+  assert.equal(a.jj, 2);
+  assert.equal(a.jg, 1);
+  assert.equal(a.je, 1);
+  assert.equal(a.ca, 7);
+  assert.equal(a.cr, 6);
+  assert.equal(a.average, 0.75);
+  assert.equal(b.jj, 1);
+  assert.equal(b.jp, 1);
+  assert.equal(list[0].team, 'Equipo A');
+});
+
+test('consolidados y líderes (league)', async () => {
+  const { cookie } = await login('admin');
+  const off = await app.inject({ method: 'GET', url: '/league/offense', headers: { cookie } });
+  assert.equal(off.statusCode, 200);
+  const jesus = off.json().find((x: any) => x.name === 'JESUS HERNANDEZ');
+  assert.equal(jesus.offense.av, 313.7);
+  assert.equal(jesus.offense.slg, 372.5);
+
+  const pit = await app.inject({ method: 'GET', url: '/league/pitching', headers: { cookie } });
+  assert.equal(pit.statusCode, 200);
+  const rel = pit.json().find((x: any) => x.name === 'RELEVISTA');
+  assert.equal(rel.pitching.jj, 4);
+
+  const leaders = await app.inject({ method: 'GET', url: '/league/leaders', headers: { cookie } });
+  assert.equal(leaders.statusCode, 200);
+  const d = leaders.json();
+  assert.ok(Array.isArray(d.offense.av));
+  assert.ok(Array.isArray(d.offense.hr));
+  assert.ok(Array.isArray(d.pitching.pcl_era));
+  assert.ok(Array.isArray(d.pitching.sv));
+});

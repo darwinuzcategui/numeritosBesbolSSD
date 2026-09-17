@@ -127,6 +127,16 @@ CREATE TABLE pitching_games (
   hits_allowed INTEGER DEFAULT 0,
   UNIQUE(player_id, game_number)
 );
+
+CREATE TABLE team_games (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  team_id INTEGER NOT NULL REFERENCES teams(id) ON DELETE CASCADE,
+  game_number INTEGER NOT NULL,
+  result TEXT,                 -- 'G', 'P', 'E' o NULL
+  runs_scored INTEGER DEFAULT 0,
+  runs_against INTEGER DEFAULT 0,
+  UNIQUE(team_id, game_number)
+);
 ```
 
 - El campo `number` de jugador es el dorsal; no se exige único (se valida en UI).
@@ -140,6 +150,10 @@ CREATE TABLE pitching_games (
 - `outs = Σ (floor(innings)*3 + round((innings - floor(innings))*10))`
 - `PCL_ERA = earned_runs * 27 / outs` (si `outs=0` → 0)
 - `JJ` = nº de juegos con `pitched=1`; `JG`/`JP`/`JS` = conteo de `result='G'/'P'/'S'`.
+- **Posiciones (por equipo):** sobre `team_games` con `result` en `G/P/E`:
+  - `JJ` = juegos con resultado; `JG`/`JP`/`JE` = conteo de `G`/`P`/`E`.
+  - `CA` = Σ `runs_scored`; `CR` = Σ `runs_against`; `DIF` = `CA − CR`.
+  - `Average` = `(JG + 0.5·JE) / JJ` (si `JJ=0` → 0). Orden: Average desc → DIF desc → CA desc.
 
 ### Endpoints REST (JSON)
 
@@ -154,6 +168,12 @@ CREATE TABLE pitching_games (
   - `PUT /players/:id/games/:gameNumber` → guardar un jugador en un juego.
 - **Ajustes:** `GET /settings`, `PUT /settings` (games_count).
 - **Usuarios (admin):** `GET /users`, `POST /users`, `PUT /users/:id`, `DELETE /users/:id`.
+- **Resultados y consolidados:**
+  - `GET /teams/:id/results`, `PUT /teams/:id/results` → resultado G/P/E + CA/CR por juego.
+  - `GET /league/offense` → "Total general" (ofensiva consolidada de todos los equipos).
+  - `GET /league/pitching` → "Lanzadores" consolidados.
+  - `GET /league/standings` → tabla de posiciones.
+  - `GET /league/leaders` → top 10 por categoría (ofensiva y pitcheo).
 
 **Permisos:** `admin` accede a todo; `capturador` solo a GET de equipos/jugadores/estadísticas
 y a PUT de estadísticas (no gestiona equipos, jugadores ni usuarios).

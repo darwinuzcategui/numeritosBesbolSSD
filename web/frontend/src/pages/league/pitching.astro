@@ -1,0 +1,29 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Lanzadores">
+  <div class="page-head"><h1>Lanzadores — Consolidado</h1></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Equipo</th><th>Nº</th><th>Nombre</th><th>JJ</th><th>JG</th><th>JP</th><th>JS</th><th>INN</th><th>CL</th><th>K</th><th>H</th><th>PCL/ERA</th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <script>
+    import { api } from '../../lib/api.js';
+    const { data } = await api('/league/pitching');
+    document.getElementById('tbody').innerHTML = data
+      .map((p: any) => {
+        const x = p.pitching;
+        return `<tr>
+          <td>${p.team}</td><td>${p.number ?? ''}</td><td>${p.name}</td>
+          <td>${x.jj}</td><td>${x.jg}</td><td>${x.jp}</td><td>${x.js}</td>
+          <td>${x.innings}</td><td>${x.earned_runs}</td><td>${x.strikeouts}</td>
+          <td>${x.hits_allowed}</td><td>${x.pcl_era.toFixed(2)}</td>
+        </tr>`;
+      })
+      .join('');
+  </script>
+</Layout>
