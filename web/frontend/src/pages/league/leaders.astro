@@ -18,38 +18,33 @@ import Layout from '../../layouts/Layout.astro';
     ] as const;
     const PIT = [
       ['PCL/ERA', 'pcl_era', (v: number) => v.toFixed(2)],
-      ['JG (ganados)', 'jg', (v: number) => String(v)],
-      ['K (ponches)', 'k', (v: number) => String(v)],
-      ['INN (entradas)', 'inn', (v: number) => String(v)],
+      ['JG', 'jg', (v: number) => String(v)],
+      ['K', 'k', (v: number) => String(v)],
+      ['INN', 'inn', (v: number) => String(v)],
       ['H permitidos', 'h_permitidos', (v: number) => String(v)],
-      ['SV (salvados)', 'sv', (v: number) => String(v)],
+      ['SV', 'sv', (v: number) => String(v)],
     ] as const;
 
     const { data } = await api('/league/leaders');
 
-    function card(title: string, rows: Array<{ name: string; team: string; value: number }>, fmt: (v: number) => string) {
-      const items = rows.length
-        ? rows.map((r, i) => `<li><span class="pos">${i + 1}</span><span class="nm">${r.name}</span><span class="tm">${r.team}</span><span class="vl">${fmt(r.value)}</span></li>`).join('')
-        : '<li class="muted">Sin datos</li>';
-      return `<div class="card lead-card"><h2>${title}</h2><ol class="lead-list">${items}</ol></div>`;
+    function table(title: string, rows: Array<{ name: string; team: string; value: number }>, fmt: (v: number) => string) {
+      const body = rows.length
+        ? rows.map((r, i) => `<tr><td>${i + 1}</td><td>${r.name}</td><td>${r.team}</td><td>${fmt(r.value)}</td></tr>`).join('')
+        : '<tr><td colspan="4" class="muted">Sin datos</td></tr>';
+      return `<div class="card">
+        <h2>${title}</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pos</th><th>Nombre</th><th>Equipo</th><th>Valor</th></tr></thead>
+            <tbody>${body}</tbody>
+          </table>
+        </div>
+      </div>`;
     }
 
-    let html = '<div class="lead-grid">';
-    for (const [label, key, fmt] of OFF) html += card(`TOP 10 — ${label}`, data.offense[key], fmt);
-    for (const [label, key, fmt] of PIT) html += card(`TOP 10 LANZADORES — ${label}`, data.pitching[key], fmt);
-    html += '</div>';
+    let html = '';
+    for (const [label, key, fmt] of OFF) html += table(`TOP 10 — ${label}`, data.offense[key], fmt);
+    for (const [label, key, fmt] of PIT) html += table(`TOP 10 LANZADORES — ${label}`, data.pitching[key], fmt);
     document.getElementById('sections').innerHTML = html;
   </script>
-  <style>
-    .lead-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-    .lead-card { margin-bottom: 0; }
-    .lead-card h2 { font-size: 0.9rem; }
-    .lead-list { list-style: none; margin: 0; padding: 0; }
-    .lead-list li { display: flex; gap: 0.6rem; padding: 0.35rem 0; border-bottom: 1px solid var(--line-soft); font-size: 0.88rem; }
-    .lead-list li:last-child { border-bottom: none; }
-    .lead-list .pos { color: var(--ink-3); width: 1.2rem; text-align: right; font-variant-numeric: tabular-nums; }
-    .lead-list .nm { flex: 1; font-weight: 550; }
-    .lead-list .tm { color: var(--ink-3); font-size: 0.78rem; align-self: center; }
-    .lead-list .vl { font-weight: 650; font-variant-numeric: tabular-nums; }
-  </style>
 </Layout>
