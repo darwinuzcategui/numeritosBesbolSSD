@@ -60,6 +60,19 @@ Documentos de referencia: `docs/SPEC_TEMPLATE.md`, `docs/PLAN_TEMPLATE.md`,
 
 - `docs/features/excel-numeritos/SPEC.md` — Fase 1, en revisión.
 
+## Flujo de ramas (Git/GitHub)
+
+Ramas principales: `main` (producción) y `dev` (integración). El trabajo de cada
+tarea se hace en una rama de feature y se integra a `dev` solo tras revisión.
+
+1. **Rama por tarea:** cada tarea de `TASKS.md` se implementa en su propia rama
+   `feature/<id-tarea>` (ej. `feature/T1`), creada desde `dev`.
+2. **Merge a dev por PR:** al terminar una tarea se abre un Pull Request de
+   `feature/<id-tarea>` → `dev`. La persona revisa y aprueba el PR en GitHub antes
+   del merge; el agente nunca mergea una feature sin esa aprobación.
+3. **Merge a main:** solo cuando la persona lo pide, desde `dev` aprobado.
+4. El agente crea las ramas y los PR con `gh`, y reporta el enlace del PR.
+
 ## Validación en Fase 1 (Excel)
 
 No hay build ni tests automatizados para el libro. La validación es manual y
