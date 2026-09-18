@@ -1,0 +1,88 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+const id = Astro.params.id;
+---
+<Layout title="Resultados">
+  <div class="page-head">
+    <p class="crumb"><a href={`/teams/${id}`}>← Equipo</a></p>
+    <h1 id="team-name">Resultados del equipo</h1>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Juego</th><th>Resultado</th><th>CA (a favor)</th><th>CR (en contra)</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <p style="margin-top: 1rem"><button id="save" type="button" class="btn btn-yellow">Guardar resultados</button> <span id="msg" class="ok"></span></p>
+  </div>
+  <script>
+    import { api } from '../../../lib/api.js';
+    const id = location.pathname.split('/')[2] || '';
+
+    let gamesCount = 0;
+
+    async function load() {
+      const { data } = await api(`/teams/${id}/results`);
+      document.getElementById('team-name').textContent = `Resultados — ${data.team.name}`;
+      gamesCount = data.games_count;
+      const tbody = document.getElementById('tbody');
+      tbody.innerHTML = '';
+      for (const r of data.results) {
+        const tr = document.createElement('tr');
+        tr.dataset.gameNumber = String(r.game_number);
+        const td1 = document.createElement('td');
+        td1.textContent = `Juego ${r.game_number}`;
+        const td2 = document.createElement('td');
+        const sel = document.createElement('select');
+        for (const opt of ['', 'G', 'P', 'E']) {
+          const o = document.createElement('option');
+          o.value = opt;
+          o.textContent = opt === '' ? '—' : opt;
+          if (opt === (r.result ?? '')) o.selected = true;
+          sel.appendChild(o);
+        }
+        td2.appendChild(sel);
+        const td3 = document.createElement('td');
+        const ca = document.createElement('input');
+        ca.type = 'number';
+        ca.className = 'small';
+        ca.min = '0';
+        ca.value = r.runs_scored ? String(r.runs_scored) : '';
+        td3.appendChild(ca);
+        const td4 = document.createElement('td');
+        const cr = document.createElement('input');
+        cr.type = 'number';
+        cr.className = 'small';
+        cr.min = '0';
+        cr.value = r.runs_against ? String(r.runs_against) : '';
+        td4.appendChild(cr);
+        tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+        tbody.appendChild(tr);
+      }
+    }
+
+    document.getElementById('save').addEventListener('click', async () => {
+      const rows = Array.from(document.getElementById('tbody').children) as HTMLTableRowElement[];
+      const results: any[] = [];
+      for (const row of rows) {
+        const gameNumber = Number(row.dataset.gameNumber);
+        const sel = row.querySelector('select');
+        const inputs = row.querySelectorAll('input');
+        results.push({
+          game_number: gameNumber,
+          result: sel.value || null,
+          runs_scored: Number(inputs[0].value) || 0,
+          runs_against: Number(inputs[1].value) || 0,
+        });
+      }
+      const { status, data } = await api(`/teams/${id}/results`, {
+        method: 'PUT',
+        body: JSON.stringify({ results }),
+      });
+      document.getElementById('msg').textContent = status === 200 ? 'Guardado ✓' : (data?.error || 'Error');
+    });
+
+    load();
+  </script>
+</Layout>

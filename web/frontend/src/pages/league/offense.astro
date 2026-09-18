@@ -1,0 +1,31 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Total general">
+  <div class="page-head"><h1>Total general — Ofensiva</h1></div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Equipo</th><th>Nº</th><th>Nombre</th><th>VB</th><th>CA</th><th>H</th><th>2B</th><th>3B</th><th>HR</th><th>CI</th><th>K</th><th>BB</th><th>BR</th><th>GP</th><th>SH</th><th>SF</th><th>INT</th><th>BAL</th><th>AL</th><th>AV</th><th>SLG</th></tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  <script>
+    import { api } from '../../lib/api.js';
+    const { data } = await api('/league/offense');
+    document.getElementById('tbody').innerHTML = data
+      .map((p: any) => {
+        const o = p.offense;
+        return `<tr>
+          <td>${p.team}</td><td>${p.number ?? ''}</td><td>${p.name}</td>
+          <td>${o.at_bats}</td><td>${o.runs}</td><td>${o.hits}</td><td>${o.doubles}</td>
+          <td>${o.triples}</td><td>${o.home_runs}</td><td>${o.rbi}</td><td>${o.strikeouts}</td>
+          <td>${o.walks}</td><td>${o.stolen_bases}</td><td>${o.hit_by_pitch}</td><td>${o.sacrifice_hits}</td>
+          <td>${o.sacrifice_flies}</td><td>${o.interference}</td><td>${o.bal}</td><td>${o.al}</td>
+          <td>${o.av.toFixed(1)}</td><td>${o.slg.toFixed(1)}</td>
+        </tr>`;
+      })
+      .join('');
+  </script>
+</Layout>

@@ -24,6 +24,13 @@ solo cuando su implementación y validación estén hechas y registradas.
 - **T10 — Frontend: captura** por juego y por jugador. Validación: CA-07.
 - **T11 — Frontend: pantallas admin** (usuarios, ajustes). Validación: permisos.
 - **T12 — Integración y evidencia:** recorrer CA y registrar en esta tabla.
+- **T13 — Backend: resultados de equipo** (tabla `team_games` + `GET/PUT /teams/:id/results`).
+  Validación: tests (CA-09, CA-11).
+- **T14 — Backend: consolidados y líderes** (`/league/offense`, `/league/pitching`,
+  `/league/standings`, `/league/leaders`). Validación: tests (CA-10, CA-12).
+- **T15 — Frontend: vistas de consolidado, posiciones, líderes y captura de resultados.**
+  Validación: `astro build` + manual.
+- **T16 — Seed de resultados de equipo** (desde el Excel demo). Validación: posiciones pobladas.
 
 ## Registro de evidencia
 
@@ -37,6 +44,9 @@ solo cuando su implementación y validación estén hechas y registradas.
 | Backend | `npm test` + `typecheck` + smoke | — | 15/15 tests, 0 errores TS, listen+login+sesión OK | ✓ |
 | Hotfix AV/SLG+SV | `npm test` (15 tests) + `build` frontend | VB=51,H=16,HR=1; result S×2 | AV 313.7, SLG 372.5, JS=2 | ✓ |
 | Frontend | `npm run build -w frontend` | — | `astro build` completo sin errores | ✓ |
+| T13 / CA-09,11 | `integration.test.ts` | resultados G/E/P + marcador | JJ/JG/JP/JE/CA/CR/DIF/Average y orden correctos | ✓ |
+| T14 / CA-10,12 | `integration.test.ts` | consolidado 500 jugadores | AV 313.7, SLG 372.5; leaders por categoría | ✓ |
+| T15/T16 | `astro build` + smoke en BD real | seed demo (20 equipos) | standings 20 equipos, top3 = E19(1.0),E1(.75),E11(.75) | ✓ |
 | CA UI (flujos) | Manual en navegador | — | pendiente (no se automatizó UI) | pendiente |
 
 ## Notas

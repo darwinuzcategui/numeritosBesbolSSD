@@ -1,0 +1,50 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+<Layout title="Líderes">
+  <div class="page-head"><h1>Top 10 — Líderes</h1></div>
+  <div id="sections"></div>
+  <script>
+    import { api } from '../../lib/api.js';
+
+    const OFF = [
+      ['AV', 'av', (v: number) => v.toFixed(1)],
+      ['SLG', 'slg', (v: number) => v.toFixed(1)],
+      ['HR', 'hr', (v: number) => String(v)],
+      ['CI', 'ci', (v: number) => String(v)],
+      ['H', 'h', (v: number) => String(v)],
+      ['BR', 'br', (v: number) => String(v)],
+      ['CA', 'ca', (v: number) => String(v)],
+    ] as const;
+    const PIT = [
+      ['PCL/ERA', 'pcl_era', (v: number) => v.toFixed(2)],
+      ['JG', 'jg', (v: number) => String(v)],
+      ['K', 'k', (v: number) => String(v)],
+      ['INN', 'inn', (v: number) => String(v)],
+      ['H permitidos', 'h_permitidos', (v: number) => String(v)],
+      ['SV', 'sv', (v: number) => String(v)],
+    ] as const;
+
+    const { data } = await api('/league/leaders');
+
+    function table(title: string, rows: Array<{ name: string; team: string; value: number }>, fmt: (v: number) => string) {
+      const body = rows.length
+        ? rows.map((r, i) => `<tr><td>${i + 1}</td><td>${r.name}</td><td>${r.team}</td><td>${fmt(r.value)}</td></tr>`).join('')
+        : '<tr><td colspan="4" class="muted">Sin datos</td></tr>';
+      return `<div class="card">
+        <h2>${title}</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Pos</th><th>Nombre</th><th>Equipo</th><th>Valor</th></tr></thead>
+            <tbody>${body}</tbody>
+          </table>
+        </div>
+      </div>`;
+    }
+
+    let html = '';
+    for (const [label, key, fmt] of OFF) html += table(`TOP 10 — ${label}`, data.offense[key], fmt);
+    for (const [label, key, fmt] of PIT) html += table(`TOP 10 LANZADORES — ${label}`, data.pitching[key], fmt);
+    document.getElementById('sections').innerHTML = html;
+  </script>
+</Layout>
