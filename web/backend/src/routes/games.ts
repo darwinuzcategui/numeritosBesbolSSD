@@ -52,7 +52,7 @@ function sum(rows: any[], col: string): number {
   return rows.reduce((acc, r) => acc + num(r[col]), 0);
 }
 
-function seasonStats(teamId: number) {
+export function seasonStats(teamId: number) {
   const players = db
     .prepare('SELECT id, name, number FROM players WHERE team_id = ? ORDER BY number IS NULL, number, name')
     .all(teamId) as any[];
