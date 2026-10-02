@@ -8,6 +8,7 @@ import { registerGameRoutes } from './routes/games.js';
 import { registerSettingsRoutes } from './routes/settings.js';
 import { registerUserRoutes } from './routes/users.js';
 import { registerLeagueRoutes } from './routes/league.js';
+import { registerReportRoutes } from './routes/reports.js';
 
 export function buildApp() {
   const app = Fastify({ logger: false });
@@ -22,6 +23,7 @@ export function buildApp() {
   app.register(registerSettingsRoutes);
   app.register(registerUserRoutes);
   app.register(registerLeagueRoutes);
+  app.register(registerReportRoutes);
 
   return app;
 }
